@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?><ChoregrapheProject xmlns="http://www.aldebaran-robotics.com/schema/choregraphe/project.xsd" xar_version="3"><Box name="root" id="-1" localization="8" tooltip="Root box of Choregraphe&apos;s behavior. Highest level possible." x="0" y="0"><bitmap>media/images/box/root.png</bitmap><script language="4"><content><![CDATA[]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" /><Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" /><Timeline enable="0"><BehaviorLayer name="behavior_layer1"><BehaviorKeyframe name="keyframe1" index="1"><Diagram><Box name="Hello World" id="1" localization="8" tooltip="" x="440" y="192"><bitmap>media/images/box/box-python-script.png</bitmap><script language="4"><content><![CDATA[class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self)
+        self.tts = ALProxy('ALTextToSpeech')
+        self.motion = ALProxy('ALMotion')
+
+    def onLoad(self):
+
+        pass
+
+    def onUnload(self):
+        #~Go back to rest position
+        self.motion.setStiffnesses("Arms", 0.0)
+        self.motion.setStiffnesses("Body", 0.0)
+        pass
+
+    def onInput_onStart(self):
+        self.tts.say("Hello WORLD")
+        self.t_pose()
+        self.turn_360()
+
+        #self.wave_hand()
+
+
+        import time
+        time.sleep(5)
+
+        self.onInput_onStop()
+        pass
+
+    def onInput_onStop(self):
+        self.onUnload()
+        self.onStopped()
+
+    def t_pose(self):
+        # Set stiffness to allow movement
+        self.motion.setStiffnesses("Arms", 1.0)
+
+        # T-pose positions for both arms
+        names = ["LShoulderPitch", "LShoulderRoll", "RShoulderPitch", "RShoulderRoll", "LElbowYaw", "RElbowYaw"]
+        angles = [0.0, 1.5, 0.0, -1.5, 0.0, 0.0]  # Adjust for T-pose (arms out horizontally)
+        fractionMaxSpeed = 0.2  # Set speed
+
+        # Set the angles for the T-pose
+        self.motion.setAngles(names, angles, fractionMaxSpeed)
+
+        # Optionally, return arms to a resting position after T-pose
+        # self.motion.setStiffnesses("Arms", 0.0)
+
+    def turn_360(self):
+        # Set stiffness to allow movement
+        self.motion.setStiffnesses("Body", 1.0)
+
+        # Turn the robot 360 degrees to the left
+        angle = 2.0 * 3.14159  # 360 degrees in radians
+        fractionMaxSpeed = 0.2  # Set speed
+        self.motion.moveInit()
+        self.motion.moveTo(0.0, 0.0, angle, fractionMaxSpeed)
+
+        # Remove stiffness (relax the robot)
+        self.motion.setStiffnesses("Body", 0.0)]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" /><Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" /></Box><Link inputowner="1" indexofinput="2" outputowner="0" indexofoutput="2" /><Link inputowner="0" indexofinput="4" outputowner="1" indexofoutput="4" /></Diagram></BehaviorKeyframe></BehaviorLayer></Timeline></Box></ChoregrapheProject>
